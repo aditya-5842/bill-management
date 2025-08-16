@@ -5,7 +5,7 @@ from fastapi.routing import APIRouter
 from fastapi import APIRouter
 from loguru import logger
 
-from bill_manager.api.services.upload_file_handler import BaseFileHandler
+from bill_manager.api.services import PytesseractOCR
 
 
 router: APIRouter = APIRouter()
@@ -18,18 +18,18 @@ async def health_check():
 
 @router.post("/ocr")
 async def create_upload_file(file: UploadFile, response: Response):
-    file_handler = BaseFileHandler(file=file)
+    ocr_handler = PytesseractOCR(file=file)
     try:
-        file_handler.save_file()
+        text = ocr_handler.extract_text()
         return {
             "filename": file.filename,
             "content_type": file.content_type,
-            "message": "File uploaded successfully",
+            "ocr_content": text,
         }
     except Exception as e:
         logger.error(f"Error uploading file: {e}")
         response.status_code = 500
         return {"error": "Failed to upload file"}
     finally:
-        file_handler.delete_file()
+        ocr_handler.delete_file()
         logger.info(f"File {file.filename} processed and deleted after upload.")
