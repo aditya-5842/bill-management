@@ -1,12 +1,16 @@
 import uvicorn
 
+from bill_manager.settings import get_settings
+
+settings = get_settings()
+
 
 def main() -> None:
     uvicorn.run(
         "bill_manager.api.application:get_app",
-        host="0.0.0.0",
-        port=8080,
-        reload=True,
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=settings.RELOAD,
         factory=True,
     )
 
