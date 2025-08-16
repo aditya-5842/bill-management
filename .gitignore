@@ -5,4 +5,9 @@
 *__pycache__
 *.pyc
 
+
+# folders
+uploads
+
+# files
 .env
